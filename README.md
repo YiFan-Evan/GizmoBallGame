@@ -31,7 +31,7 @@
 |  ----  | ----  |
 | ![avatar](./untitled/src/hand.JPG)  | 获取对象，用于改变组件 |
 | ![avatar](./untitled/src/ball.JPG)  | 游戏所用的弹球 |
-| ![avatar](./untitled/src/hole.JPG)  | 弹球掉入黑洞则游戏结束 |
+| ![avatar](./untitled/src/hole.jpg)  | 弹球掉入黑洞则游戏结束 |
 | ![avatar](./untitled/src/triangle.JPG)  | 三角形组件，碰撞会反弹 |
 | ![avatar](./untitled/src/diamond.JPG)  | 圆形组件，碰撞会反弹 |
 | ![avatar](./untitled/src/cube.JPG)  | 正方形组件，碰撞会反弹 |
@@ -64,7 +64,7 @@
 | create mode  | 进入设计模式 |
 | play mode  | 进入游玩模式 |
 
-### 游戏区域
+### 游戏区域（20*20）
 
 ![avatar](./untitled/img/area.JPG)
 
