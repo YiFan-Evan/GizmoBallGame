@@ -46,7 +46,7 @@
 
 工具栏可控制以下功能
 
-|  组件   | 功能  |
+|  工具   | 功能  |
 |  ----  | ----  |
 | ![avatar](./untitled/src/spin.JPG)  | 旋转组件 |
 | ![avatar](./untitled/src/delete.JPG)  | 删除组件 |
@@ -59,7 +59,7 @@
 
 模式栏可控制以下功能
 
-|  组件   | 功能  |
+|  模式   | 功能  |
 |  ----  | ----  |
 | create mode  | 进入设计模式 |
 | play mode  | 进入游玩模式 |
