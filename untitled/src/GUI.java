@@ -145,7 +145,7 @@ public class GUI implements AWTEventListener {
             saveItem.addActionListener(e -> new Thread(new SaveFile()).start());
             openItem.addActionListener(e -> new Thread(new OpenFile()).start());
             clearItem.addActionListener(e -> clear());
-            closeItem.addActionListener(e -> System.exit(0));
+            closeItem.addActionListener(e -> System.exit(-1));
         }
 
         //todo：初始化侧边栏文字
