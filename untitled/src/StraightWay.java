@@ -3,7 +3,7 @@
 /**
  * 直轨道类，组件之一，用于控制直轨道行为
  */
-public class StraightPanel extends ShapePanel {
+public class StraightWay extends Shape {
 
     /**
      * 构造方法
@@ -11,7 +11,7 @@ public class StraightPanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public StraightPanel(int x, int y) {
+    public StraightWay(int x, int y) {
         super(x, y, "straight");
     }
 

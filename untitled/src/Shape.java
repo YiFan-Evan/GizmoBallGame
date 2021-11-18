@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * 游戏所有界面组件的父抽象类
  */
-public abstract class ShapePanel extends JPanel implements Serializable {
+public abstract class Shape extends JPanel implements Serializable {
 
     //序列化编号
     @Serial
@@ -71,7 +71,7 @@ public abstract class ShapePanel extends JPanel implements Serializable {
      * @param y
      * @param name
      */
-    public ShapePanel(int x, int y, String name) {
+    public Shape(int x, int y, String name) {
         angle = Angle.Zero;//初始角度
         this.name = name;//设置组件的名字
         location = new Location(x, y);//设置组件的位置

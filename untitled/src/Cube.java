@@ -3,7 +3,7 @@
 /**
  * 立方石类，组件之一，用于控制立方石行为
  */
-public class CubePanel extends ShapePanel {
+public class Cube extends Shape {
 
     /**
      * 构造方法
@@ -11,7 +11,7 @@ public class CubePanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public CubePanel(int x, int y) {
+    public Cube(int x, int y) {
         super(x, y, "cube");
     }
 

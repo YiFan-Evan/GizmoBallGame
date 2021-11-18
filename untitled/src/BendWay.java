@@ -3,7 +3,7 @@
 /**
  * 弯轨道类，组件之一，用于控制弯轨道动作
  */
-public class BendPanel extends ShapePanel {
+public class BendWay extends Shape {
 
     //弯轨道的深入量
     int shift = 10;
@@ -13,7 +13,7 @@ public class BendPanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public BendPanel(int x, int y) {
+    public BendWay(int x, int y) {
         super(x, y, "bend");
     }
 

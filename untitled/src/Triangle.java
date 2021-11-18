@@ -3,7 +3,7 @@
 /**
  * 三角形类，组件之一，用于控制三角形行为
  */
-public class TrianglePanel extends ShapePanel {
+public class Triangle extends Shape {
 
     /**
      * 构造方法
@@ -11,7 +11,7 @@ public class TrianglePanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public TrianglePanel(int x, int y) {
+    public Triangle(int x, int y) {
         super(x, y, "triangle");
     }
 

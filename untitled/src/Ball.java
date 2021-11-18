@@ -6,7 +6,7 @@ import java.util.ArrayList;
 /**
  * 小球类，组件之一，用于控制小球动作
  */
-public class BallPanel extends ShapePanel {
+public class Ball extends Shape {
 
     //小球速度
     double speedX;
@@ -97,7 +97,7 @@ public class BallPanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public BallPanel(int x, int y) {
+    public Ball(int x, int y) {
         super(x, y, "ball");
     }
 
@@ -137,7 +137,7 @@ public class BallPanel extends ShapePanel {
         //遍历检测是否与其余碰撞体重叠
         for (Pair<Integer> pair : round) {
             if (GameSystem.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1] != null) {
-                ShapePanel shapePanel = GameSystem.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1];
+                Shape shapePanel = GameSystem.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1];
                 return shapePanel.act(pair, new Pair<>(speedX, speedY));//碰撞则返回各自碰撞处理办法
             }
         }

@@ -1,9 +1,9 @@
-//todo：黑洞类，组件之一，用于控制黑洞行为
+//todo：手指类，组件之一，用于控制手指行为
 
 /**
- * 黑洞类，组件之一，用于控制黑洞行为
+ * 手指类，组件之一，用于控制手指行为
  */
-public class HolePanel extends ShapePanel {
+public class Hand extends Shape {
 
     /**
      * 构造方法
@@ -11,12 +11,12 @@ public class HolePanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public HolePanel(int x, int y) {
-        super(x, y, "hole");
+    public Hand(int x, int y) {
+        super(x, y, "hand");
     }
 
     /**
-     * 小球碰撞处理方法（结束游玩）
+     * 小球碰撞处理方法（没有）
      *
      * @param position
      * @param speed
@@ -24,10 +24,8 @@ public class HolePanel extends ShapePanel {
      */
     @Override
     public Pair<Double> act(Pair<Integer> position, Pair<Double> speed) {
-        GameSystem.isPlay = false;
-        return new Pair<>(speed.x, speed.y);
+        return null;
     }
-
 
     /**
      * 是否能改变大小

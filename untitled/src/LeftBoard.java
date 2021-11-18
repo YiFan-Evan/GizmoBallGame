@@ -1,11 +1,11 @@
 import java.awt.*;
 
-//todo：右平台类，组件之一，用于控制右部平台行为
+//todo：左平台类，组件之一，用于控制左部平台行为
 
 /**
- * 右平台类，组件之一，用于控制右部平台行为
+ * 左平台类，组件之一，用于控制左部平台行为
  */
-public class RightPanel extends ShapePanel {
+public class LeftBoard extends Shape {
 
     //记录平台偏移量
     int shift;
@@ -16,8 +16,8 @@ public class RightPanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public RightPanel(int x, int y) {
-        super(x, y, "right");
+    public LeftBoard(int x, int y) {
+        super(x, y, "left");
         shift = 0;
     }
 

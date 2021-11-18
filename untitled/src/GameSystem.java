@@ -1,3 +1,4 @@
+import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -10,8 +11,8 @@ public class GameSystem {
 
     //游戏的数据信息
     public static boolean isPlay;//是否在游玩模式
-    public static ShapePanel[][] shapeMap;//游戏每个方格内形状组件的信息
-    public static ArrayList<ShapePanel> shapes;//所有在游戏内的组件
+    public static Shape[][] shapeMap;//游戏每个方格内形状组件的信息
+    public static ArrayList<Shape> shapes;//所有在游戏内的组件
     public static Pair<Integer> mousePoint;//鼠标指针在游戏框内的位置
     public static int cell = 40;//一个框的像素
     public static PlayGame play;//游玩模式的控制对象
@@ -20,11 +21,22 @@ public class GameSystem {
     public static int towards;//游戏内托板的朝向
 
     /**
+     * 程序的入口，游戏的启动
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+
+        //将游戏系统启动
+        init();
+    }
+
+    /**
      * 返回鼠标指针所在位置的形状对象
      *
      * @return
      */
-    public static ShapePanel getShape() {
+    public static Shape getShape() {
         if (mousePoint != null)
             return shapeMap[GameSystem.mousePoint.x / GameSystem.cell + 1][GameSystem.mousePoint.y / GameSystem.cell + 1];
         return null;
@@ -41,7 +53,7 @@ public class GameSystem {
         gravity = 0.1;
         play = null;
         mousePoint = null;
-        shapeMap = new ShapePanel[22][22];
+        shapeMap = new Shape[22][22];
         shapes = new ArrayList<>();
 
         //初始化界面
@@ -61,6 +73,13 @@ public class GameSystem {
      * 开始一轮游玩模式
      */
     public static void start() {
+
+        //判断是否在游玩模式
+        if (isPlay) {
+            JOptionPane.showMessageDialog(gui.frame, "已进入游玩模式，请勿重复点击", "错误", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         try {
 
             //设置新的一轮游戏控制
@@ -110,7 +129,7 @@ public class GameSystem {
     public static class PlayGame {
 
         //小球的对象以及位置
-        BallPanel ball;
+        Ball ball;
         int x;
         int y;
 
@@ -126,9 +145,9 @@ public class GameSystem {
 
             //找到游戏中的球，否则初始化失败
             ball = null;
-            for (ShapePanel shape : GameSystem.shapes) {
+            for (Shape shape : GameSystem.shapes) {
                 if (shape.name.equals("ball"))
-                    ball = (BallPanel) shape;
+                    ball = (Ball) shape;
             }
             if (ball == null)
                 return;
@@ -153,13 +172,13 @@ public class GameSystem {
             isPlay = false;//更新状态
             gui.fileMenu.setEnabled(true);//打开文件功能
             gui.defaultToolkit.removeAWTEventListener(gui);//关闭键盘监听
-            shapes.forEach(ShapePanel::home);//将平台回位
+            shapes.forEach(Shape::home);//将平台回位
             shapes.removeIf((shapePanel -> shapePanel.name.equals("ball")));//移除游戏小球
 
             //在游戏有球的情况下，在初始位置新创建一个球
             if (ball != null) {
                 gui.window.remove(0);
-                BallPanel thePanel = new BallPanel(x, y);
+                Ball thePanel = new Ball(x, y);
                 GameSystem.shapeMap[x][y] = thePanel;
                 GameSystem.shapes.add(thePanel);
                 gui.window.add(thePanel, 0);

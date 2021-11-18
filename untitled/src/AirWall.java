@@ -3,7 +3,7 @@
 /**
  * 空气墙类，组件之一，用于阻挡游戏界面的边界
  */
-public class AirWall extends ShapePanel {
+public class AirWall extends Shape {
 
     //空气墙的朝向
     int towards;

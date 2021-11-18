@@ -3,7 +3,7 @@
 /**
  * 钻石类，组件之一，用于控制钻石行为
  */
-public class DiamondPanel extends ShapePanel {
+public class Circle extends Shape {
 
     /**
      * 构造方法
@@ -11,7 +11,7 @@ public class DiamondPanel extends ShapePanel {
      * @param x
      * @param y
      */
-    public DiamondPanel(int x, int y) {
+    public Circle(int x, int y) {
         super(x, y, "diamond");
     }
 
