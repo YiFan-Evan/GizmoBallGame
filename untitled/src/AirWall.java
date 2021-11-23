@@ -5,7 +5,7 @@
  */
 public class AirWall extends Shape {
 
-    //空气墙的朝向
+    //空气墙的朝向（1在上面，2在下面，3在左面，4在右面）
     int towards;
 
     /**
@@ -30,18 +30,26 @@ public class AirWall extends Shape {
     @Override
     public Pair<Double> act(Pair<Integer> position, Pair<Double> speed) {
         switch (towards) {
+
+            //上面的空气墙
             case 1 -> {
                 if (speed.y < 0)
                     return new Pair<>(speed.x, -speed.y);
             }
+
+            //下面的空气墙
             case 2 -> {
                 if (speed.y > 0)
                     return new Pair<>(speed.x, -speed.y);
             }
+
+            //左边的空气墙
             case 3 -> {
                 if (speed.x < 0)
                     return new Pair<>(-speed.x, speed.y);
             }
+
+            //右边的空气墙
             case 4 -> {
                 if (speed.x > 0)
                     return new Pair<>(-speed.x, speed.y);

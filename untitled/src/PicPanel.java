@@ -6,7 +6,7 @@ import java.awt.*;
 /**
  * 图片面板，用于加载带图片的界面面板
  */
-class PicPanel extends JPanel {
+public class PicPanel extends JPanel {
 
     //图片存储
     ImageIcon icon;
@@ -18,7 +18,7 @@ class PicPanel extends JPanel {
      * @param name
      */
     public PicPanel(String name) {
-        icon = new ImageIcon(getClass().getResource(name));
+        icon = new ImageIcon(this.getClass().getResource(name));
         img = icon.getImage();
     }
 
