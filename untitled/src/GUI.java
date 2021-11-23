@@ -94,7 +94,7 @@ public class GUI implements AWTEventListener {
             frame.setBackground(Color.GRAY);
             frame.setLayout(null);
             frame.setResizable(false);
-            window = new PicPanel("/table.png");
+            window = new PicPanel("/pic/table.png");
             window.setBackground(Color.GRAY);
             window.setBounds(0, 0, 800, 800);
             window.setLayout(null);
@@ -186,13 +186,13 @@ public class GUI implements AWTEventListener {
 
         //todo：加入各个工具图片到工具区
         {
-            spin = new PicPanel("/spin.jpg");
+            spin = new PicPanel("pic/spin.jpg");
             tools.add(spin);
-            delete = new PicPanel("/delete.jpg");
+            delete = new PicPanel("pic/delete.jpg");
             tools.add(delete);
-            plus = new PicPanel("/add.jpg");
+            plus = new PicPanel("pic/add.jpg");
             tools.add(plus);
-            minus = new PicPanel("/remove.jpg");
+            minus = new PicPanel("pic/remove.jpg");
             tools.add(minus);
         }
 
@@ -204,7 +204,7 @@ public class GUI implements AWTEventListener {
             play_mode.setFont(f);
             modes.add(create_mode);
             modes.add(play_mode);
-            modes.add(new PicPanel("/logo.jpg"));
+            modes.add(new PicPanel("pic/logo.jpg"));
         }
 
         //todo：加入单选按钮到组件区
@@ -245,43 +245,43 @@ public class GUI implements AWTEventListener {
 
         //todo：加入各个组件图片到组件区
         {
-            hand = new PicPanel("/hand.jpg");
+            hand = new PicPanel("pic/hand.jpg");
             hand.setBackground(Color.WHITE);
             components.add(hand);
             components.add(radioButton2);
-            ball = new PicPanel("/ball.jpg");
+            ball = new PicPanel("pic/ball.jpg");
             ball.setBackground(Color.WHITE);
             components.add(ball);
             components.add(radioButton3);
-            hole = new PicPanel("/hole.jpg");
+            hole = new PicPanel("pic/hole.jpg");
             hole.setBackground(Color.WHITE);
             components.add(hole);
             components.add(radioButton4);
-            triangle = new PicPanel("/triangle.jpg");
+            triangle = new PicPanel("pic/triangle.jpg");
             triangle.setBackground(Color.WHITE);
             components.add(triangle);
             components.add(radioButton5);
-            diamond = new PicPanel("/diamond.jpg");
+            diamond = new PicPanel("pic/diamond.jpg");
             diamond.setBackground(Color.WHITE);
             components.add(diamond);
             components.add(radioButton6);
-            cube = new PicPanel("/cube.jpg");
+            cube = new PicPanel("pic/cube.jpg");
             cube.setBackground(Color.WHITE);
             components.add(cube);
             components.add(radioButton7);
-            straight = new PicPanel("/straight.jpg");
+            straight = new PicPanel("pic/straight.jpg");
             straight.setBackground(Color.WHITE);
             components.add(straight);
             components.add(radioButton8);
-            bend = new PicPanel("/bend.jpg");
+            bend = new PicPanel("pic/bend.jpg");
             bend.setBackground(Color.WHITE);
             components.add(bend);
             components.add(radioButton9);
-            left = new PicPanel("/left.jpg");
+            left = new PicPanel("pic/left.jpg");
             left.setBackground(Color.WHITE);
             components.add(left);
             components.add(radioButton10);
-            right = new PicPanel("/right.jpg");
+            right = new PicPanel("pic/right.jpg");
             right.setBackground(Color.WHITE);
             components.add(right);
         }
@@ -369,17 +369,33 @@ public class GUI implements AWTEventListener {
         }
 
         /**
-         * 遍历数组，让相应的平台移动
+         * 遍历数组，让相应的平台移动，但多线程不安全
          */
         @Override
         public void run() {
-            GameSystem.shapes.forEach(shapePanel -> {
-                if (shapePanel.name.equals(name)) {
-                    if (GameSystem.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
-                        shapePanel.move();//调用平台的移动方法
+
+            //正序遍历
+            if (e < 0) {
+                GameSystem.shapes.forEach(shapePanel -> {
+                    if (shapePanel.name.equals(name)) {
+                        if (GameSystem.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
+                            shapePanel.move();//调用平台的移动方法
+                        }
+                    }
+                });
+            }
+
+            //倒序遍历
+            else {
+                for (int i = GameSystem.shapes.size() - 1; i >= 0; i--) {
+                    Shape shapePanel = GameSystem.shapes.get(i);
+                    if (shapePanel.name.equals(name)) {
+                        if (GameSystem.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
+                            shapePanel.move();//调用平台的移动方法
+                        }
                     }
                 }
-            });
+            }
             window.repaint();
         }
     }

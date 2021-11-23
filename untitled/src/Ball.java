@@ -8,6 +8,12 @@ import java.util.ArrayList;
  */
 public class Ball extends Shape {
 
+    /**
+     * Vx：小球x轴速度（朝右为正，每一帧增加到X坐标长度中）
+     * Vy：小球y轴速度（朝右为正，每一帧增加到Y坐标长度中）
+     * Gravity：小球所受重力（为一个固定值，方向向下，每一帧增加到Y轴速度中）
+     */
+
     //小球速度
     double speedX;
     double speedY;
@@ -50,6 +56,11 @@ public class Ball extends Shape {
      * @param y
      */
     public void update(int x, int y) {
+
+        /*
+        小球会在每一帧的更新中检测碰撞，而每个组件有自己的碰撞方法。
+        在小球运动过程中，我们维护了小球边缘的16个点。
+         */
 
         //清空位置点
         round.clear();
@@ -130,6 +141,14 @@ public class Ball extends Shape {
      * @return
      */
     public Pair<Double> collision(int x, int y) {
+
+        /*
+        在每一帧更新这16个点的位置（通过圆心位置找到，三角函数值有一定的四舍五入），
+        判断这16个点在下一帧是否会与组件相碰撞（是否进入了组件所在的格子内），若某一个点被检测出
+        会碰撞（称其为碰撞点），则找到被碰撞的组件对象，调用该组件的碰撞方法。即把碰撞点位置传给组件，
+        让不同的组件用符合组件形状的几何方法计算出碰撞后小球应有的速度，返回给小球。
+        小球接收碰撞后组件更新的速度信息，从而正确地控制出小球碰撞后的运动轨迹。
+         */
 
         //预判下一帧位置
         update(x, y);

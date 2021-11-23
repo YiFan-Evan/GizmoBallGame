@@ -14,7 +14,7 @@ public class GameSystem {
     public static Shape[][] shapeMap;//游戏每个方格内形状组件的信息
     public static ArrayList<Shape> shapes;//所有在游戏内的组件
     public static Pair<Integer> mousePoint;//鼠标指针在游戏框内的位置
-    public static int cell = 40;//一个框的像素
+    public static int cell = 40;//一个框的像素，场景里每个组件大小都是40乘40像素，每一个格子也是40*40像素，刚好组件都放置在格子内。
     public static PlayGame play;//游玩模式的控制对象
     public static GUI gui;//游戏的界面
     public static double gravity;//地心引力的常量
@@ -60,7 +60,8 @@ public class GameSystem {
         gui = new GUI();
         gui.init();
 
-        //初始化空气墙
+        //初始化空气墙，在格子标号为0的点中存放了空气墙，（空气墙的朝向1在上面，2在下面，3在左面，4在右面）空气墙分别布置在四周，一碰撞小球就会反弹，保证小球不会离开界面。
+        //（空气墙不会显示在游玩的界面之中，超出了画面之外）
         for (int i = 0; i < 22; i++) {
             shapeMap[0][i] = new AirWall(0, i, 3);
             shapeMap[i][0] = new AirWall(0, i, 1);

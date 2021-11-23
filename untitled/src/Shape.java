@@ -94,9 +94,9 @@ public abstract class Shape extends JPanel implements Serializable {
         ImageIcon icon;
         Image img;
         if (angle == Angle.Zero)
-            icon = new ImageIcon(getClass().getResource("/" + name + ".jpg"));
+            icon = new ImageIcon(getClass().getResource("pic/" + name + ".jpg"));
         else
-            icon = new ImageIcon(getClass().getResource("/" + name + "-" + angle.toString() + ".jpg"));
+            icon = new ImageIcon(getClass().getResource("pic/" + name + "-" + angle.toString() + ".jpg"));
         img = icon.getImage();
         g.drawImage(img, 0, 0, this.getWidth(), this.getHeight(), this);
     }
