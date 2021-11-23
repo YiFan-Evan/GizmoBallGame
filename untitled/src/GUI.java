@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.*;
-import java.util.ArrayList;
 
 //todo：游戏整个swing界面类
 
@@ -33,8 +31,8 @@ public class GUI implements AWTEventListener {
     public JMenuItem closeItem;
 
     //子项功能弹出窗
-    private FileDialog openDia;
-    private FileDialog saveDia;
+    public FileDialog openDia;
+    public FileDialog saveDia;
 
     //游戏模式按钮
     public Button create_mode;
@@ -142,9 +140,9 @@ public class GUI implements AWTEventListener {
             fileMenu.add(closeItem);// 将“退出”菜单项添加到“文件”菜单上
             menuBar.add(fileMenu);
             frame.setJMenuBar(menuBar);
-            saveItem.addActionListener(e -> new Thread(new SaveFile()).start());
-            openItem.addActionListener(e -> new Thread(new OpenFile()).start());
-            clearItem.addActionListener(e -> clear());
+            saveItem.addActionListener(e -> new Thread(FileUtil.getSave()).start());
+            openItem.addActionListener(e -> new Thread(FileUtil.getOpen()).start());
+            clearItem.addActionListener(e -> GameSystem.board.clear());
             closeItem.addActionListener(e -> System.exit(-1));
         }
 
@@ -313,22 +311,6 @@ public class GUI implements AWTEventListener {
     }
 
     /**
-     * 清空游玩窗口
-     */
-    public void clear() {
-        GameSystem.shapes.clear();
-        GameSystem.shapeMap = new Shape[22][22];
-        window.removeAll();
-        window.repaint();
-        for (int i = 0; i < 22; i++) {
-            GameSystem.shapeMap[0][i] = new AirWall(0, i, 3);
-            GameSystem.shapeMap[i][0] = new AirWall(0, i, 1);
-            GameSystem.shapeMap[21][i] = new AirWall(0, i, 4);
-            GameSystem.shapeMap[i][21] = new AirWall(0, i, 2);
-        }
-    }
-
-    /**
      * 将监听事件变为每个键盘的监听事件（平台移动）
      *
      * @param event
@@ -364,7 +346,7 @@ public class GUI implements AWTEventListener {
          */
         public Move(int towards, boolean isLeft) {
             this.e = towards;
-            GameSystem.towards = e;
+            GameSystem.towards.set(e);
             this.name = isLeft ? "left" : "right";
         }
 
@@ -376,9 +358,9 @@ public class GUI implements AWTEventListener {
 
             //正序遍历
             if (e < 0) {
-                GameSystem.shapes.forEach(shapePanel -> {
+                GameSystem.board.shapes.forEach(shapePanel -> {
                     if (shapePanel.name.equals(name)) {
-                        if (GameSystem.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
+                        if (GameSystem.board.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
                             shapePanel.move();//调用平台的移动方法
                         }
                     }
@@ -387,10 +369,10 @@ public class GUI implements AWTEventListener {
 
             //倒序遍历
             else {
-                for (int i = GameSystem.shapes.size() - 1; i >= 0; i--) {
-                    Shape shapePanel = GameSystem.shapes.get(i);
+                for (int i = GameSystem.board.shapes.size() - 1; i >= 0; i--) {
+                    Shape shapePanel = GameSystem.board.shapes.get(i);
                     if (shapePanel.name.equals(name)) {
-                        if (GameSystem.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
+                        if (GameSystem.board.shapeMap[shapePanel.location.x + e][shapePanel.location.y] == null) {
                             shapePanel.move();//调用平台的移动方法
                         }
                     }
@@ -455,7 +437,7 @@ public class GUI implements AWTEventListener {
         public void mouseClicked(MouseEvent e) {
             if (GameSystem.play != null)
                 return;
-            if (GameSystem.mousePoint != null && selectedWhich() == 1)
+            if (GameSystem.board.mousePoint != null && selectedWhich() == 1)
                 switch (condition) {
                     case 1 -> new Thread(new PlusComponent()).start();
                     case 2 -> new Thread(new MinusComponent()).start();
@@ -508,7 +490,7 @@ public class GUI implements AWTEventListener {
                     return;
 
                 //重设鼠标指针至形状上
-                GameSystem.mousePoint = shape.location.point;
+                GameSystem.board.mousePoint = shape.location.point;
 
                 //形状不能增大则返回
                 if (!shape.canSize())
@@ -516,32 +498,32 @@ public class GUI implements AWTEventListener {
 
                 //判断下一行有没有其他东西，有则返回
                 for (int i = 0; i < shape.size.x / GameSystem.cell; i++) {
-                    if (GameSystem.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell + 1] != null)
+                    if (GameSystem.board.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell + 1] != null)
                         return;
                 }
 
                 //判断右一行有没有其他东西，有则返回
                 for (int j = 0; j < shape.size.y / GameSystem.cell; j++) {
-                    if (GameSystem.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.top / GameSystem.cell + 1 + j] != null)
+                    if (GameSystem.board.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.top / GameSystem.cell + 1 + j] != null)
                         return;
                 }
 
                 //判断右下角有没有其他东西，有则返回
-                if (GameSystem.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.bottom / GameSystem.cell + 1] != null)
+                if (GameSystem.board.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.bottom / GameSystem.cell + 1] != null)
                     return;
 
                 //添加下一行占位碰撞体
                 for (int i = 0; i < shape.size.x / GameSystem.cell; i++) {
-                    GameSystem.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell + 1] = shape;
+                    GameSystem.board.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell + 1] = shape;
                 }
 
                 //添加右一行占位碰撞体
                 for (int j = 0; j < shape.size.y / GameSystem.cell; j++) {
-                    GameSystem.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.top / GameSystem.cell + 1 + j] = shape;
+                    GameSystem.board.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.top / GameSystem.cell + 1 + j] = shape;
                 }
 
                 //添加右下角占位碰撞体
-                GameSystem.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.bottom / GameSystem.cell + 1] = shape;
+                GameSystem.board.shapeMap[shape.location.right / GameSystem.cell + 1][shape.location.bottom / GameSystem.cell + 1] = shape;
 
                 //将形状改为加一个单位的大小
                 shape.setSize(shape.size.x + GameSystem.cell, shape.size.y + GameSystem.cell);
@@ -575,7 +557,7 @@ public class GUI implements AWTEventListener {
                 return;
 
             //重设鼠标指针至形状上
-            GameSystem.mousePoint = shape.location.point;
+            GameSystem.board.mousePoint = shape.location.point;
 
             //形状不能减小则返回
             if (!shape.canSize())
@@ -587,16 +569,16 @@ public class GUI implements AWTEventListener {
 
             //去除底部一行占位碰撞体
             for (int i = 0; i < shape.size.x / GameSystem.cell - 1; i++) {
-                GameSystem.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell] = null;
+                GameSystem.board.shapeMap[shape.location.left / GameSystem.cell + 1 + i][shape.location.bottom / GameSystem.cell] = null;
             }
 
             //去除右边一行占位碰撞体
             for (int j = 0; j < shape.size.y / GameSystem.cell - 1; j++) {
-                GameSystem.shapeMap[shape.location.right / GameSystem.cell][shape.location.top / GameSystem.cell + 1 + j] = null;
+                GameSystem.board.shapeMap[shape.location.right / GameSystem.cell][shape.location.top / GameSystem.cell + 1 + j] = null;
             }
 
             //去除右下角占位碰撞体
-            GameSystem.shapeMap[shape.location.right / GameSystem.cell][shape.location.bottom / GameSystem.cell] = null;
+            GameSystem.board.shapeMap[shape.location.right / GameSystem.cell][shape.location.bottom / GameSystem.cell] = null;
 
             //将形状改为减一个单位的大小
             shape.setSize(shape.size.x - GameSystem.cell, shape.size.y - GameSystem.cell);
@@ -625,17 +607,17 @@ public class GUI implements AWTEventListener {
                 return;
 
             //重设鼠标指针至形状上
-            GameSystem.mousePoint = shape.location.point;
+            GameSystem.board.mousePoint = shape.location.point;
 
             //去除该形状的占位碰撞体
             for (int i = 0; i < shape.size.x / GameSystem.cell; i++) {
                 for (int j = 0; j < shape.size.y / GameSystem.cell; j++) {
-                    GameSystem.shapeMap[shape.location.x + i][shape.location.y + j] = null;
+                    GameSystem.board.shapeMap[shape.location.x + i][shape.location.y + j] = null;
                 }
             }
 
             //去除该形状在游戏数组中的存储
-            GameSystem.shapes.remove(shape);
+            GameSystem.board.shapes.remove(shape);
 
             //在游玩界面去除该形状
             window.remove(shape);
@@ -644,7 +626,7 @@ public class GUI implements AWTEventListener {
             window.repaint();
 
             //去除鼠标位置记录
-            GameSystem.mousePoint = null;
+            GameSystem.board.mousePoint = null;
         }
     }
 
@@ -670,7 +652,7 @@ public class GUI implements AWTEventListener {
                 return;
 
             //重设鼠标指针至形状上
-            GameSystem.mousePoint = shape.location.point;
+            GameSystem.board.mousePoint = shape.location.point;
 
             //形状不能旋转则返回
             if (!shape.canSpin())
@@ -699,13 +681,13 @@ public class GUI implements AWTEventListener {
                 return;
 
             //判断该位置没有其他物体（通过占位碰撞体）
-            if (GameSystem.shapeMap[e.getX() / GameSystem.cell + 1][e.getY() / GameSystem.cell + 1] != null) {
+            if (GameSystem.board.shapeMap[e.getX() / GameSystem.cell + 1][e.getY() / GameSystem.cell + 1] != null) {
 
                 //判断是否选到手指
                 if (selectedWhich() == 1)
 
                     //设置当前鼠标位置为点击窗格
-                    GameSystem.mousePoint = new Pair<>(e.getX(), e.getY());
+                    GameSystem.board.mousePoint = new Pair<>(e.getX(), e.getY());
 
                 //如果没选到手指则返回
                 return;
@@ -767,15 +749,15 @@ public class GUI implements AWTEventListener {
 
                 //小球
                 case 2 -> {
-                    for (Shape shape : GameSystem.shapes) {
+                    for (Shape shape : GameSystem.board.shapes) {
                         if (shape.name.equals("ball")) {
                             JOptionPane.showMessageDialog(frame, "无法放置第二个小球。", "错误", JOptionPane.WARNING_MESSAGE);
                             return;
                         }
                     }//如果已经有小球就不添加
                     Ball thePanel = new Ball(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel, 0);
                     window.repaint();
                 }
@@ -783,8 +765,8 @@ public class GUI implements AWTEventListener {
                 //黑洞
                 case 3 -> {
                     Hole thePanel = new Hole(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -792,8 +774,8 @@ public class GUI implements AWTEventListener {
                 //三角
                 case 4 -> {
                     Triangle thePanel = new Triangle(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -801,8 +783,8 @@ public class GUI implements AWTEventListener {
                 //钻石
                 case 5 -> {
                     Circle thePanel = new Circle(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -810,8 +792,8 @@ public class GUI implements AWTEventListener {
                 //立方石
                 case 6 -> {
                     Cube thePanel = new Cube(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -819,8 +801,8 @@ public class GUI implements AWTEventListener {
                 //直轨道
                 case 7 -> {
                     StraightWay thePanel = new StraightWay(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -828,8 +810,8 @@ public class GUI implements AWTEventListener {
                 //弯轨道
                 case 8 -> {
                     BendWay thePanel = new BendWay(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -837,8 +819,8 @@ public class GUI implements AWTEventListener {
                 //左平台
                 case 9 -> {
                     LeftBoard thePanel = new LeftBoard(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
@@ -846,109 +828,11 @@ public class GUI implements AWTEventListener {
                 //右平台
                 case 10 -> {
                     RightBoard thePanel = new RightBoard(x / GameSystem.cell + 1, y / GameSystem.cell + 1);
-                    GameSystem.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
-                    GameSystem.shapes.add(thePanel);
+                    GameSystem.board.shapeMap[x / GameSystem.cell + 1][y / GameSystem.cell + 1] = thePanel;
+                    GameSystem.board.shapes.add(thePanel);
                     window.add(thePanel);
                     window.repaint();
                 }
-            }
-        }
-    }
-
-    /**
-     * 用来保存文件的类
-     */
-    public class SaveFile implements Runnable {
-
-        /**
-         * 保存文件的方法
-         */
-        @Override
-        public void run() {
-
-            //得到保存的文件位置
-            File file;
-            saveDia.setVisible(true);//显示保存文件对话框
-            String dirpath = saveDia.getDirectory();//获取保存文件路径并保存到字符串中。
-            String fileName = saveDia.getFile();////获取打保存文件名称并保存到字符串中
-
-            if (dirpath == null || fileName == null)//判断路径和文件是否为空
-                return;//空操作
-            else
-                file = new File(dirpath, fileName);//文件不为空，新建一个路径和名称
-
-            //将游戏的占位碰撞体和游戏的组件数组序列化后写入文件
-            try {
-                FileOutputStream fs = new FileOutputStream(file);//写文件流
-                ObjectOutputStream os = new ObjectOutputStream(fs);//写对象流
-                os.writeObject(GameSystem.shapes);//写组件数组
-                os.writeObject(GameSystem.shapeMap);//写地图信息
-                os.close();
-
-                //抛出IO异常
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * 用来打开文件的类
-     */
-    public class OpenFile implements Runnable {
-
-        /**
-         * 打开文件的方法
-         */
-        @Override
-        public void run() {
-
-            //得到打开的文件位置
-            openDia.setVisible(true);//显示打开文件对话框
-            String dirpath = openDia.getDirectory();//获取打开文件路径并保存到字符串中。
-            String fileName = openDia.getFile();//获取打开文件名称并保存到字符串中
-
-            if (dirpath == null || fileName == null)//判断路径和文件是否为空
-                return;
-
-            File file = new File(dirpath, fileName);//创建新的路径和名称
-
-            //将游戏的占位碰撞体和游戏的组件数组反序列化后生成对象
-            try {
-
-                //得到对象
-                FileInputStream fi = new FileInputStream(file);//读文件流
-                ObjectInputStream oi = new ObjectInputStream(fi);//读对象流
-                Object o1 = oi.readObject();//得到第一个对象
-                Object o2 = oi.readObject();//得到第二个对象
-
-                //强转对象
-                ArrayList<Shape> panels = (ArrayList<Shape>) o1;
-                Shape[][] shapes = (Shape[][]) o2;
-                oi.close();
-
-                //将对象指向游戏
-                GameSystem.shapes = panels;
-                GameSystem.shapeMap = shapes;
-
-                //回复窗体状态
-                window.removeAll();
-                panels.forEach((shape -> {
-                    if (shape.name.equals("ball"))
-                        window.add(shape, 0);
-                    else
-                        window.add(shape);
-                }));//顺序添加每个组件，如果是球，则放在最上层
-                window.repaint();
-
-
-                //抛出IO异常、抛出文件路径找不到异常
-            } catch (Exception e) {
-                e.printStackTrace();
-                if (e instanceof StreamCorruptedException)
-                    JOptionPane.showMessageDialog(frame, "此文件类型未知，应用无法读取", "错误", JOptionPane.WARNING_MESSAGE);
-                else
-                    JOptionPane.showMessageDialog(frame, "系统找不到指定的文件。", "错误", JOptionPane.WARNING_MESSAGE);
             }
         }
     }

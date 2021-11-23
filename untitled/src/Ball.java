@@ -155,8 +155,8 @@ public class Ball extends Shape {
 
         //遍历检测是否与其余碰撞体重叠
         for (Pair<Integer> pair : round) {
-            if (GameSystem.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1] != null) {
-                Shape shapePanel = GameSystem.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1];
+            if (GameSystem.board.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1] != null) {
+                Shape shapePanel = GameSystem.board.shapeMap[pair.x / 40 + 1][pair.y / 40 + 1];
                 return shapePanel.act(pair, new Pair<>(speedX, speedY));//碰撞则返回各自碰撞处理办法
             }
         }

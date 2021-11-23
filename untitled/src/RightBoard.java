@@ -27,13 +27,13 @@ public class RightBoard extends Shape {
     public void move() {
 
         //记录偏移量
-        shift -= GameSystem.towards;
+        shift -= GameSystem.towards.get();
 
         //改变平台位置
-        GameSystem.shapeMap[location.x][location.y] = null;
-        location = new Location(location.x + GameSystem.towards, location.y);
+        GameSystem.board.shapeMap[location.x][location.y] = null;
+        location = new Location(location.x + GameSystem.towards.get(), location.y);
         size = new Pair<>(GameSystem.cell, GameSystem.cell);
-        GameSystem.shapeMap[location.x][location.y] = this;
+        GameSystem.board.shapeMap[location.x][location.y] = this;
         this.setBounds(location.point.x, location.point.y, size.x, size.y);
         this.setOpaque(false);
         this.setLayout(new GridLayout(1, 1));
@@ -45,10 +45,10 @@ public class RightBoard extends Shape {
     public void home() {
 
         //改变平台位置
-        GameSystem.shapeMap[location.x][location.y] = null;
+        GameSystem.board.shapeMap[location.x][location.y] = null;
         location = new Location(location.x + shift, location.y);
         size = new Pair<>(GameSystem.cell, GameSystem.cell);
-        GameSystem.shapeMap[location.x][location.y] = this;
+        GameSystem.board.shapeMap[location.x][location.y] = this;
         this.setBounds(location.point.x, location.point.y, size.x, size.y);
         this.setOpaque(false);
         this.setLayout(new GridLayout(1, 1));

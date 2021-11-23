@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 //todo：游戏的控制，存储游戏所有数据
 
@@ -11,14 +11,12 @@ public class GameSystem {
 
     //游戏的数据信息
     public static boolean isPlay;//是否在游玩模式
-    public static Shape[][] shapeMap;//游戏每个方格内形状组件的信息
-    public static ArrayList<Shape> shapes;//所有在游戏内的组件
-    public static Pair<Integer> mousePoint;//鼠标指针在游戏框内的位置
+    public static ChessBoard board;//游戏棋盘
     public static int cell = 40;//一个框的像素，场景里每个组件大小都是40乘40像素，每一个格子也是40*40像素，刚好组件都放置在格子内。
     public static PlayGame play;//游玩模式的控制对象
     public static GUI gui;//游戏的界面
     public static double gravity;//地心引力的常量
-    public static int towards;//游戏内托板的朝向
+    public static AtomicInteger towards;//游戏内托板的朝向
 
     /**
      * 程序的入口，游戏的启动
@@ -37,8 +35,8 @@ public class GameSystem {
      * @return
      */
     public static Shape getShape() {
-        if (mousePoint != null)
-            return shapeMap[GameSystem.mousePoint.x / GameSystem.cell + 1][GameSystem.mousePoint.y / GameSystem.cell + 1];
+        if (board.mousePoint != null)
+            return board.shapeMap[board.mousePoint.x / cell + 1][board.mousePoint.y / cell + 1];
         return null;
     }
 
@@ -48,13 +46,11 @@ public class GameSystem {
     public static void init() {
 
         //游戏基本变量设置初始化
-        towards = 0;
+        towards = new AtomicInteger(0);
         isPlay = false;
         gravity = 0.1;
         play = null;
-        mousePoint = null;
-        shapeMap = new Shape[22][22];
-        shapes = new ArrayList<>();
+        board = new ChessBoard();
 
         //初始化界面
         gui = new GUI();
@@ -63,10 +59,10 @@ public class GameSystem {
         //初始化空气墙，在格子标号为0的点中存放了空气墙，（空气墙的朝向1在上面，2在下面，3在左面，4在右面）空气墙分别布置在四周，一碰撞小球就会反弹，保证小球不会离开界面。
         //（空气墙不会显示在游玩的界面之中，超出了画面之外）
         for (int i = 0; i < 22; i++) {
-            shapeMap[0][i] = new AirWall(0, i, 3);
-            shapeMap[i][0] = new AirWall(0, i, 1);
-            shapeMap[21][i] = new AirWall(0, i, 4);
-            shapeMap[i][21] = new AirWall(0, i, 2);
+            board.shapeMap[0][i] = new AirWall(0, i, 3);
+            board.shapeMap[i][0] = new AirWall(0, i, 1);
+            board.shapeMap[21][i] = new AirWall(0, i, 4);
+            board.shapeMap[i][21] = new AirWall(0, i, 2);
         }
     }
 
@@ -146,7 +142,7 @@ public class GameSystem {
 
             //找到游戏中的球，否则初始化失败
             ball = null;
-            for (Shape shape : GameSystem.shapes) {
+            for (Shape shape : board.shapes) {
                 if (shape.name.equals("ball"))
                     ball = (Ball) shape;
             }
@@ -158,7 +154,7 @@ public class GameSystem {
             y = ball.location.y;
 
             //将球的碰撞体清空（球不会与初始位置碰撞）
-            shapeMap[x][y] = null;
+            board.shapeMap[x][y] = null;
 
             //初始化球
             ball.init();
@@ -173,15 +169,15 @@ public class GameSystem {
             isPlay = false;//更新状态
             gui.fileMenu.setEnabled(true);//打开文件功能
             gui.defaultToolkit.removeAWTEventListener(gui);//关闭键盘监听
-            shapes.forEach(Shape::home);//将平台回位
-            shapes.removeIf((shapePanel -> shapePanel.name.equals("ball")));//移除游戏小球
+            board.shapes.forEach(Shape::home);//将平台回位
+            board.shapes.removeIf((shapePanel -> shapePanel.name.equals("ball")));//移除游戏小球
 
             //在游戏有球的情况下，在初始位置新创建一个球
             if (ball != null) {
                 gui.window.remove(0);
                 Ball thePanel = new Ball(x, y);
-                GameSystem.shapeMap[x][y] = thePanel;
-                GameSystem.shapes.add(thePanel);
+                board.shapeMap[x][y] = thePanel;
+                board.shapes.add(thePanel);
                 gui.window.add(thePanel, 0);
             }
         }
